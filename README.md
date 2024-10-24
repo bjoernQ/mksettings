@@ -16,4 +16,3 @@ code .
 ```
 
 This will overwrite `.vscode/settings.json` without asking!
-You need to give all features even if they are default ones.

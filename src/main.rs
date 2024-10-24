@@ -23,7 +23,6 @@ fn main() {
         .map(|v| format!("\"{}\"", v))
         .collect::<Vec<String>>()
         .join(", ");
-    let features_flat = features.join(" ");
 
     let chip = args.chip.unwrap_or("esp32c3".to_string()).to_lowercase();
 
@@ -37,44 +36,20 @@ fn main() {
 
     let content = format!(
         "
-    {{
-        \"rust-analyzer.cargo.target\": \"{target}\",
-        \"rust-analyzer.cargo.features\": [
-            {features_list}
-        ],
-        \"rust-analyzer.check.overrideCommand\": [
-            \"cargo",
-            \"check\",
-            \"--examples\",
-            \"--bins\",
-            \"--lib\",            
-            \"--message-format=json\",
-            \"--no-default-features\",
-            \"--features\",
-            \"{features_flat}\",
-            \"--target\",
-            \"{target}\",
-        ],
-        \"rust-analyzer.check.allTargets\": false,
-        \"rust-analyzer.cargo.buildScripts.invocationLocation\": \"root\",
-        \"rust-analyzer.check.invocationLocation\": \"root\",
-        \"rust-analyzer.cargo.buildScripts.overrideCommand\": [
-            \"cargo",
-            \"check\",
-            \"--examples\",
-            \"--bins\",
-            \"--lib\",            
-            \"--message-format=json\",
-            \"--no-default-features\",
-            \"--features\",
-            \"{features_flat}\",
-            \"--target\",
-            \"{target}\",
-        ],
-        \"rust-analyzer.showUnlinkedFileNotification\": false,
-    }}     
+{{
+    \"rust-analyzer.cargo.target\": \"{target}\",
+    \"rust-analyzer.cargo.features\": [
+        {features_list}
+    ],
+    \"rust-analyzer.cargo.buildScripts.useRustcWrapper\": true,
+    \"rust-analyzer.cargo.allTargets\": false,
+    \"rust-analyzer.check.allTargets\": false,    
+    \"rust-analyzer.showUnlinkedFileNotification\": false,
+}}     
     "
-    );
+    )
+    .trim()
+    .to_string();
 
     std::fs::create_dir_all(".vscode/").unwrap();
     std::fs::write(".vscode/settings.json", content).unwrap();
